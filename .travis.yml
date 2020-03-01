@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t saggitarie/react-test -f ./client/Docker.dev ./client
+
+script:
+  - docker run saggitarie/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t saggitarie/multi-client  ./client
+  - docker build -t saggitarie/multi-nginx ./nginx
+  - docker build -t saggitarie/multi-server ./server
+  - docker build -t saggitarie/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  - docker push saggitarie/multi-client
+  - docker push saggitarie/multi-nginx
+  - docker push saggitarie/multi-server
+  - docker push saggitarie/multi-worker
