@@ -6,7 +6,7 @@ before_install:
   - docker build -t saggitarie/react-test -f ./client/Docker.dev ./client
 
 script:
-  - docker run saggitarie/react-test npm test -- --coverage
+  - docker run -e CI=true saggitarie/react-test npm test
 
 after_success:
   - docker build -t saggitarie/multi-client  ./client
